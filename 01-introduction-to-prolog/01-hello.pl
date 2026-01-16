@@ -1,0 +1,2 @@
+hello:-
+    format('Hello World').
