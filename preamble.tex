@@ -1,0 +1,55 @@
+% ==============================================================================================
+% PACKAGE IMPORTS
+% ----------------------------------------------------------------------------------------------
+\usepackage[margin=1in]{geometry}  % Set page margins
+\usepackage{graphicx}   % Enable including images
+\usepackage{titlesec}  % Required for custom section titles
+\usepackage{listings}   % For including code snippits
+\usepackage{xcolor}      % load the package for colors
+% ===============================================================================================
+
+% ==============================================================================================
+% CONFIGURATIONS
+% ----------------------------------------------------------------------------------------------
+% -------------------------- LISTING CONFIGURATIONS ------------------
+% Custom Listing Style
+\lstset{
+    basicstyle=\ttfamily\normalsize, % Monospaced font
+    commentstyle=\color{green!60!black}\itshape,  % Comments in green italics
+    keywordstyle=\color{blue}, % Keywords in blue
+    stringstyle=\color{red}, % Strings in red
+    numbers=left,  % Line numbers
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=5pt,
+    frame=single,  % Box around code
+    breaklines=true, % Automatic line breaks
+    showstringspaces=false,
+    tabsize=4,
+    captionpos=b,  % Captions below code
+    abovecaptionskip=0pt,
+    belowskip=5pt
+}
+
+% % Change the listing name
+% \renewcommand{\lstlistingname}{Code} % Changes "Listing" to "Code"
+
+% ------------------ GRAPHICS CONFIGURATIONS ------------------------
+\graphicspath{{../images/}}  % Default folder(s) for images
+
+% -------------------- PARAGRAPH FORMATTING --------------------------
+\setlength{\parindent}{0cm}      % Size of paragraph indentation
+\setlength{\parskip}{12pt}       % Vertical space between paragraphs
+
+% ------------------ SECTION FORMATTING -----------------------------
+% Format section titles to be ALL CAPS
+\titleformat{\section}[block]
+  {\normalfont\bfseries}
+  {\thesection}{0.5cm}{\MakeUppercase}
+
+% Customize section title spacing
+\titlespacing{\section}{0pt}{5pt}{0pt}
+
+% Suppress numbering globally for sections
+\setcounter{secnumdepth}{0}
+% ===============================================================================================
