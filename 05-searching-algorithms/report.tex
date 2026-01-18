@@ -1,0 +1,240 @@
+\documentclass[12pt,a4paper]{report}
+
+% ----------------------- PREAMBLES -------------------------
+\input{../preamble.tex}
+
+% --------------------- LAB INFORMATION ---------------------------
+\newcommand{\PracticalDate}{18th Janaury 2026}
+\newcommand{\SubmissionDate}{23rd Janaury 2026}
+
+\newcommand{\LabNo}{05}
+\newcommand{\LabTitle}{Searching Algorithms}
+
+% --------------------- LAB REPORT --------------------------------
+\begin{document}
+% Cover Page
+\input{../cover-page.tex}
+
+% Title
+\section{Title}
+\MakeUppercase{\LabTitle}
+
+% Define Objectives
+\section{Objectives}
+\begin{enumerate}
+    \item To implement breadth-first search algorithm using Python.
+    \item To implement depth-first search algorithm using Python.
+    \item To sove water jug problem using Python.
+\end{enumerate}
+
+% Define Requirements
+\section{Requirements}
+\begin{itemize}
+    \item Python
+    \item VS Code
+\end{itemize}
+
+% Theory
+\section{Theory}
+\textbf{BFS:}
+Breadth-First Search (BFS) is an algorithm for traversing or searching tree or graph data 
+structures. It starts at the tree root (or an arbitrary node of a graph, sometimes referred 
+to as a `search key') and explores the neighbor nodes at the present depth prior to moving
+on to the nodes at the next depth level.
+
+\textbf{DFS:}
+Depth-First Search (DFS) is an algorithm for traversing or searching tree or graph data 
+structures. The algorithm starts at the root node (selecting some arbitrary node as the
+root node in the case of a graph) and explores as far as possible along each branch before 
+backtracking.
+
+\textbf{Water Jug Problem:}
+The water jug problem is a classic problem in artificial intelligence and computer science.
+The problem involves two jugs with different capacities and the goal is to measure out a
+specific amount of water using these jugs. The problem can be solved using various search
+algorithms, such as BFS and DFS.
+
+\section{Implementation}
+
+% BFS Implementation
+\begin{lstlisting}[language=Python,  caption={Breadth-First Search Implementation}, label=listing:bfs]
+from collections import deque
+
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+
+    print("BFS Traversal Order:", end=' ')
+    
+    while queue:
+        node = queue.popleft()
+        if node not in visited:
+            print(node, end=' ')
+            visited.add(node)
+            queue.extend(neighbor for neighbor in graph[node] if neighbor not in visited)
+
+# Example usage:
+if __name__ == "__main__":
+    graph = {
+        'A' : ['B','C'],
+        'B' : ['D', 'E'],
+        'C' : ['F'],
+        'D' : [],
+        'E' : ['F'],
+        'F' : []
+    }
+
+    bfs(graph, 'A')
+\end{lstlisting}
+
+% Output of BFS
+\begin{lstlisting}[caption={Output of BFS Implementation}]
+BFS Traversal Order: A B C D E F 
+\end{lstlisting}
+
+% DFS Implementation
+\begin{lstlisting}[language=Python,  caption={Depth-First Search Implementation},label=listing:dfs]
+def dfs(graph, start):
+    visited = set()
+    stack = [start]
+
+    print("DFS Traversal Order:", end=' ')
+
+    while stack:
+        node = stack.pop()
+        if node not in visited:
+            print(node, end=' ')
+            visited.add(node)
+            stack.extend(reversed([neighbor for neighbor in graph[node] if neighbor not in visited]))
+
+# Example usage:
+if __name__ == "__main__":
+    graph = {
+        'A' : ['B','C'],
+        'B' : ['D', 'E'],
+        'C' : ['F'],
+        'D' : [],
+        'E' : ['F'],
+        'F' : []
+    }
+
+    dfs(graph, 'A')
+\end{lstlisting}
+
+% Output of DFS
+\begin{lstlisting}[caption={Output of DFS Implementation}]
+DFS Traversal Order: A B D E F C 
+\end{lstlisting}
+
+% Water Jug Problem Implementation
+\begin{lstlisting}[language=Python,  caption={Water Jug Problem Implementation},label=listing:water-jug]
+###################### WATER JUG PROBLEM ######################
+# Problem Statement:
+    # Two jugs with capacities A and B
+    # Unlimited water supply
+    # Measure exactly T liters
+    # Allowed operations:
+        # Fill a jug
+        # Empty a jug
+        # Pour water from one jug to another
+
+from collections import deque
+
+def water_jug_problem(capacity_a, capacity_b, target):
+    # Set to keep track of already visited states
+    # Each state is represented as (water_in_jug_A, water_in_jug_B)
+    visited = set()
+
+    # Queue for BFS
+    # Each element contains: (current_state_A, current_state_B, path_taken)
+    queue = deque()
+
+    # Initial state: both jugs are empty
+    queue.append((0, 0, []))
+
+    # Continue BFS until queue is empty
+    while queue:
+        # Remove the front state from the queue
+        a, b, path = queue.popleft()
+
+        # If the target amount is found in either jug
+        if a == target or b == target:
+            # Add final state to path and return solution
+            path.append((a, b))
+            return path
+
+        # Skip state if already visited
+        if (a, b) in visited:
+            continue
+
+        # Mark current state as visited
+        visited.add((a, b))
+
+        # Add current state to the path
+        path = path + [(a, b)]
+
+        # Generate all possible next states using allowed operations
+        next_states = [
+
+            # Fill Jug A completely
+            (capacity_a, b),
+
+            # Fill Jug B completely
+            (a, capacity_b),
+
+            # Empty Jug A
+            (0, b),
+
+            # Empty Jug B
+            (a, 0),
+
+            # Pour water from Jug A to Jug B
+            # Amount poured is the minimum of:
+            #   - water available in A
+            #   - remaining capacity in B
+            (a - min(a, capacity_b - b),
+             b + min(a, capacity_b - b)),
+
+            # Pour water from Jug B to Jug A
+            (a + min(b, capacity_a - a),
+             b - min(b, capacity_a - a))
+        ]
+
+        # Add all unvisited next states to the BFS queue
+        for state in next_states:
+            if state not in visited:
+                queue.append((state[0], state[1], path))
+
+    # If BFS completes without finding target
+    return None
+
+# Example usage:
+if __name__ == "__main__":
+    solution = water_jug_problem(
+        capacity_a = int(input("Enter capacity of Jug A: ")),
+        capacity_b = int(input("Enter capacity of Jug B: ")),
+        target = int(input("Enter target amount of water: "))
+    )
+
+    print("Steps to reach target:", end=' ')
+    if solution:
+        for step in solution:
+            print(step, end=' ')
+    else:
+        print("No solution exists.")
+\end{lstlisting}
+
+% Output of Water Jug Problem
+\begin{lstlisting}[caption={Output of Water Jug Problem Implementation}]
+Enter capacity of Jug A: 4
+Enter capacity of Jug B: 3
+Enter target amount of water: 2
+Steps to reach target: (0, 0) (0, 3) (3, 0) (3, 3) (4, 2) 
+\end{lstlisting}
+
+% Results and Conclusion
+\section{Results and Conclusion}
+In this lab, we successfully implemented the Breadth-First Search (BFS) and Depth-First Search (DFS) 
+algorithms in Python. We also solved the Water Jug Problem using the BFS approach. The implementations 
+were tested with example graphs and jug capacities, yielding correct traversal orders and solution steps.
+\end{document}
