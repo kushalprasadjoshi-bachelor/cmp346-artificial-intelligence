@@ -1,0 +1,265 @@
+\documentclass[12pt,a4paper]{report}
+
+% ----------------------- PREAMBLES -------------------------
+\input{../preamble.tex}
+
+% --------------------- LAB INFORMATION ---------------------------
+\newcommand{\PracticalDate}{18th Janaury 2026}
+\newcommand{\SubmissionDate}{23rd Janaury 2026}
+
+\newcommand{\LabNo}{06}
+\newcommand{\LabTitle}{Pattern Recognition}
+
+% --------------------- LAB REPORT --------------------------------
+\begin{document}
+% Cover Page
+\input{../cover-page.tex}
+
+% Title
+\section{Title}
+\MakeUppercase{\LabTitle}
+
+% Define Objectives
+\section{Objectives}
+\begin{enumerate}
+    \item To understand the basic concepts of pattern recognition.
+    \item To implement KNN algorithm.
+    \item To implement K-Means Clustering algorithm.
+\end{enumerate}
+
+% Define Requirements
+\section{Requirements}
+\begin{itemize}
+    \item Python
+    \item VS Code
+    \item Libraries: OpenCV, NumPy, Matplotlib
+\end{itemize}
+
+% Theory
+\section{Theory}
+Pattern recognition is a branch of machine learning that focuses on the identification and
+classification of patterns in data. It involves the use of algorithms and statistical methods
+to recognize patterns and make predictions based on the identified patterns.
+
+\textbf{K-Nearest Neighbors (kNN):}
+kNN is one of the simplest of classification algorithms available for supervised learning. The idea is to 
+search for closest match of the test data in feature space. We will look into it with below image. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{knn.png}
+    \caption{K-Nearest Neighbors}
+\end{figure}
+
+In the image, there are two families, Blue Squares and Red Triangles. We call each family 
+as Class. Their houses are shown in their town map which we call feature space. (You can consider a 
+feature space as a space where all data are projected. For example, consider a 2D coordinate space. 
+Each data has two features, x and y coordinates. You can represent this data in your 2D coordinate 
+space. Now imagine if there are three features, you need 3D space. Now consider N features, where you 
+need N-dimensional space, This N-dimensional space is its feature space. In this image, you can consider 
+it as a 2D case with two features). 
+
+Now a new member comes into the town and creates a new home, which is shown as green 
+circle. He should be added to one of these Blue/Red families. We call that process, Classification now, let 
+us apply this algorithm, kNN.\
+
+One method is to check who is his nearest neighbor. From the image, it is clear it is the Red 
+Triangle family. So he is also added into Red Triangle. This method is called simply Nearest Neighbor, 
+because classification depends only on the nearest neighbor.\
+
+\textbf{K-Means Clustering:} 
+K-Means Clustering is an unsupervised machine learning algorithm used to group similar data points
+into clusters based on their features. The algorithm works by iteratively assigning data points to
+the nearest cluster centroid and updating the centroids based on the assigned points until convergence.
+
+% Implementation
+\section{Implementation}
+
+% Question 1: KNN Implementation
+\begin{lstlisting}[language=Python,  caption={K-Nearest Neighbors Implementation}, label=listing:knn]
+import cv2 
+import numpy as np 
+import matplotlib.pyplot as plt 
+
+# Feature set containing (x,y) values of 25 known/training data 
+trainData = np.random.randint(0, 100, (25, 2)).astype(np.float32) 
+
+# Labels each one either Red or Blue with numbers 0 and 1 
+responses = np.random.randint(0, 2, (25, 1)).astype(np.float32) 
+
+# Take Red families and plot them 
+red = trainData[responses.ravel() == 0] 
+plt.scatter(red[:, 0], red[:, 1], 80, c='r', marker='^') 
+
+# Take Blue families and plot them 
+blue = trainData[responses.ravel() == 1] 
+plt.scatter(blue[:, 0], blue[:, 1], 80, c='b', marker='s') 
+plt.show() 
+\end{lstlisting}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{output-knn.png}
+    \caption{Output of K-Nearest Neighbors Implementation}
+\end{figure}
+
+% Question 2: K-Means Clustering Implementation
+\begin{lstlisting}[language=Python,  caption={K-Means Clustering Implementation}, label=listing:kmeans]
+import numpy as np 
+import cv2 
+from matplotlib import pyplot as plt 
+
+X = np.random.randint(25,50,(25,2)) 
+Y = np.random.randint(60,85,(25,2)) 
+Z = np.vstack((X,Y)) 
+
+# convert to np.float32 
+Z = np.float32(Z) 
+
+# define criteria and apply kmeans() 
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0) 
+ret,label,center=cv2.kmeans(Z,2,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS) 
+
+# Now separate the data, Note the flatten() 
+A = Z[label.ravel()==0] 
+B = Z[label.ravel()==1] 
+
+# Plot the data 
+plt.scatter(A[:,0],A[:,1]) 
+plt.scatter(B[:,0],B[:,1],c = 'r') 
+plt.scatter(center[:,0],center[:,1],s = 80,c = 'y', marker = 's') 
+plt.xlabel('Height'),plt.ylabel('Weight') 
+plt.show() 
+\end{lstlisting}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{output-k-means-clustering.png}
+    \caption{Output of K-Means Clustering Implementation}
+\end{figure}
+
+% Question 3: K-Means Clustering Problem
+
+\begin{lstlisting}[language=Python,  caption={K-Means Clustering Implementation}, label=listing:kmeans]
+"""
+Question:
+Solve the problem using K-Means Clustering method and analyze the results.
+
+Given:
+- Generate two sets of random data:
+  x in the range [25, 100]
+  y in the range [175, 255]
+- Combine them into a single dataset
+- Plot the histogram
+- Apply K-Means clustering
+- Analyze the clustering result
+"""
+
+# ------- IMPORT REQUIRED LIBRARIES --------
+import numpy as np
+import cv2
+from matplotlib import pyplot as plt
+
+# ---------- DATA GENERATION ----------
+# Generate 25 random values between 25 and 100
+x = np.random.randint(25, 100, 25)
+
+# Generate 25 random values between 175 and 255
+y = np.random.randint(175, 255, 25)
+
+# Combine both arrays into a single array
+z = np.hstack((x, y))
+
+# Reshape data into a column vector (required by OpenCV K-Means)
+z = z.reshape((50, 1))
+
+# Convert data type to float32 (required by OpenCV)
+z = np.float32(z)
+
+# ----- HISTOGRAM OF ORIGINAL DATA ------
+plt.hist(z, 256, [0, 256])
+plt.title("Histogram of Original Data")
+plt.xlabel("Value")
+plt.ylabel("Frequency")
+plt.show()
+
+# ------- APPLY K-MEANS CLUSTERING ------
+# Define stopping criteria:
+# Stop after 10 iterations or when accuracy reaches epsilon = 1.0
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER,
+            10, 1.0)
+
+# Number of clusters (since data has two distinct groups)
+K = 2
+
+# Apply K-Means clustering
+ret, label, center = cv2.kmeans(
+    z,                      # input data
+    K,                      # number of clusters
+    None,                   # initial labels
+    criteria,               # termination criteria
+    10,                     # number of attempts
+    cv2.KMEANS_RANDOM_CENTERS
+)
+
+# ------ DISPLAY CLUSTER CENTERS -------
+print("Cluster Centers:")
+print(center)
+
+# ------- SEPARATE DATA BASED ON CLUSTERS ------
+cluster1 = z[label.ravel() == 0]
+cluster2 = z[label.ravel() == 1]
+
+# ------- PLOT CLUSTERED DATA --------
+plt.hist(cluster1, 256, [0, 256], alpha=0.6, label="Cluster 1")
+plt.hist(cluster2, 256, [0, 256], alpha=0.6, label="Cluster 2")
+
+# Plot cluster centers as vertical lines
+plt.axvline(center[0], color='black', linestyle='--', label='Center 1')
+plt.axvline(center[1], color='red', linestyle='--', label='Center 2')
+
+plt.title("K-Means Clustering Result (K = 2)")
+plt.xlabel("Value")
+plt.ylabel("Frequency")
+plt.legend()
+plt.show()
+
+# ------ RESULT ANALYSIS -------
+"""
+Analysis:
+- The histogram of the original data shows two distinct peaks.
+- K-Means with K = 2 successfully separates the data into two clusters.
+- One cluster corresponds to low-range values (25-100).
+- The other cluster corresponds to high-range values (175-255).
+- Cluster centers represent the mean value of each group.
+- Since the data is well separated, K-Means converges quickly and accurately.
+"""
+
+print("K-Means clustering successfully divided the data into two distinct clusters.")
+
+\end{lstlisting}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{output-k-means-clustering-question.png}
+    \caption{Output of K-Means Clustering Question}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{output-k-means-clustering-solution.png}
+    \caption{Output of K-Means Clustering Solution Histogram}
+\end{figure}
+
+\begin{lstlisting}[caption={Output of the K-Means Clustering Problem Implementation}]
+K-Means clustering successfully divided the data into two distinct clusters.
+\end{lstlisting}
+
+% Results and Conclusion
+\section{Results and Conclusion}
+In this lab, we explored the concepts of pattern recognition through the implementation of K-Nearest Neighbors (kNN)
+and K-Means Clustering algorithms. The kNN algorithm effectively classified data points based on their
+proximity to known classes, while the K-Means Clustering algorithm successfully grouped similar data points into distinct clusters.
+The implementations demonstrated the practical applications of these algorithms in pattern recognition tasks.
+
+\end{document}

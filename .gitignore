@@ -98,3 +98,8 @@ latex-build/
 
 # Merge conflict leftovers
 *.orig
+
+############################################
+# VS Code Temporary Files
+############################################
+tempCodeRunnerFile.*
