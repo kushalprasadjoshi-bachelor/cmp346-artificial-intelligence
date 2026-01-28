@@ -1,0 +1,239 @@
+\documentclass[12pt,a4paper]{report}
+
+% ----------------------- PREAMBLES -------------------------
+\input{../preamble.tex}
+
+% --------------------- LAB INFORMATION ---------------------------
+\newcommand{\PracticalDate}{23rd Janaury 2026}
+\newcommand{\SubmissionDate}{1st February 2026}
+
+\newcommand{\LabNo}{07}
+\newcommand{\LabTitle}{Perceptron}
+
+% --------------------- LAB REPORT --------------------------------
+\begin{document}
+% Cover Page
+\input{../cover-page.tex}
+
+% Title
+\section{Title}
+\MakeUppercase{\LabTitle}
+
+% Define Objectives
+\section{Objectives}
+\begin{enumerate}
+    \item To understand the basic concepts of Perceptron.
+    \item To implement single layer perceptron.
+    \item To implement multi layer perceptron.
+\end{enumerate}
+
+% Define Requirements
+\section{Requirements}
+\begin{itemize}
+    \item Python
+    \item VS Code
+    \item Libraries: NumPy
+\end{itemize}
+
+% Theory
+\section{Theory}
+
+    \textbf{Perceptron:}
+    A perceptron is the simplest artificial neural network model inspired by a biological neuron. 
+    It takes weighted inputs, adds a bias, and passes the result through an activation function to 
+    produce an output. It is mainly used for binary classification problems.
+
+    \textbf{Single Layer Perceptron (SLP):}
+    A Single Layer Perceptron consists of an input layer directly connected to an output layer 
+    without any hidden layers. It can solve only linearly separable problems such as AND and OR 
+    logic gates. Learning is performed using a simple weight update rule.
+
+    \textbf{Multi-Layer Perceptron (MLP):}
+    A Multi-Layer Perceptron contains one or more hidden layers between the input and output 
+    layers. It uses nonlinear activation functions and is trained using the backpropagation 
+    algorithm. MLPs are capable of solving complex, non-linearly separable problems such as XOR.\
+
+    \textbf{Epoch:}
+    An epoch represents one complete pass of the entire training dataset through the neural 
+    network. During each epoch, the network updates its weights to reduce the error. Multiple 
+    epochs are usually required for effective learning.
+
+    \textbf{Learning Rate:}
+    The learning rate controls the magnitude of weight updates during training. A smaller 
+    learning rate results in slow but stable learning, while a larger learning rate speeds 
+    up training but may cause instability. It is an important hyperparameter in neural networks.
+
+    \textbf{Weights:}
+    Weights are numerical parameters associated with each input that determine its influence on 
+    the output. During training, weights are adjusted to minimize the error between predicted 
+    and actual outputs. Proper weight tuning improves model accuracy.
+
+    \textbf{Bias:}
+    Bias is an additional parameter added to the weighted sum of inputs. It allows the 
+    activation function to be shifted, enabling the model to fit the data more flexibly. 
+    Bias helps the decision boundary avoid passing through the origin.
+
+    \textbf{Activation Function:}
+    An activation function introduces non-linearity into the neural network and determines 
+    whether a neuron should be activated. Common activation functions include the step function, 
+    sigmoid function, and ReLU.\ Non-linearity allows networks to learn complex patterns.
+
+    \textbf{Linearly Separable Problem:}
+    A problem is said to be linearly separable if a single straight line (or hyperplane) can 
+    separate the data points into different classes. Examples include AND and OR logic gates. 
+    Single Layer Perceptrons can solve such problems.
+
+    \textbf{Non-Linearly Separable Problem:}
+    A non-linearly separable problem cannot be separated using a single straight line. The XOR 
+    problem is a classic example. Solving such problems requires hidden layers and nonlinear 
+    activation functions.
+
+    \textbf{Backpropagation:}
+    Backpropagation is a supervised learning algorithm used in Multi-Layer Perceptrons. It 
+    calculates the error at the output layer and propagates it backward to update the weights. 
+    This process enables the network to learn complex relationships.
+
+    \textbf{Training Data:}
+    Training data consists of input-output pairs used to train the neural network. The model 
+    learns by adjusting its parameters based on this data. High-quality and sufficient training 
+    data leads to better performance.
+
+\section{Implementation}
+
+% Single Layer Perceptron Implementation
+\begin{lstlisting}[language=Python,  caption={Single Layer Perceptron Implementation}, label=listing:single-layer-perceptron]
+# Implement a perceptron to learn the AND logic gate. 
+# ( AND gate is Linearly separable and  Perfect for single layer perceptron)
+
+import numpy as np
+
+# Training data for AND gate
+X = np.array([
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1]
+])
+
+y = np.array([0, 0, 0, 1])  # AND output
+
+# Initialize weights and bias
+weights = np.zeros(2)
+bias = 0
+learning_rate = 0.1
+
+# Activation function
+def step_function(x):
+    return 1 if x >= 0 else 0
+
+# Training
+for epoch in range(10):
+    for i in range(len(X)):
+        linear_output = np.dot(X[i], weights) + bias
+        y_pred = step_function(linear_output)
+        error = y[i] - y_pred
+
+        # Update rule
+        weights += learning_rate * error * X[i]
+        bias += learning_rate * error
+
+print("Trained weights:", weights)
+print("Trained bias:", bias)
+
+# Testing
+print("\nTesting AND gate:")
+for i in range(len(X)):
+    output = step_function(np.dot(X[i], weights) + bias)
+    print(X[i], "->", output)
+
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Output of the Single Layer Perceptron Implementation}]
+Trained weights: [0.2 0.1]
+Trained bias: -0.20000000000000004
+
+Testing AND gate:
+[0 0] -> 0
+[0 1] -> 0
+[1 0] -> 0
+[1 1] -> 1
+\end{lstlisting}
+
+% Multi Layer Perceptron Implementation
+\begin{lstlisting}[language=Python,  caption={Multi Layer Perceptron Implementation}, label=listing:multi-layer-perceptron]
+# Implement an MLP to learn the XOR logic gate. 
+# (XOR gate is for Not linearly separable and it requires hidden layer)
+
+import numpy as np
+
+# XOR dataset
+X = np.array([
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1]
+])
+y = np.array([[0], [1], [1], [0]])
+
+# Initialize weights
+np.random.seed(1)
+W1 = np.random.randn(2, 2)
+b1 = np.zeros((1, 2))
+W2 = np.random.randn(2, 1)
+b2 = np.zeros((1, 1))
+
+learning_rate = 0.1
+
+# Activation functions
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
+# Training
+for epoch in range(5000):
+    # Forward pass
+    hidden_input = np.dot(X, W1) + b1
+    hidden_output = sigmoid(hidden_input)
+
+    output_input = np.dot(hidden_output, W2) + b2
+    y_pred = sigmoid(output_input)
+
+    # Backpropagation
+    error = y - y_pred
+    d_output = error * sigmoid_derivative(y_pred)
+
+    d_hidden = d_output.dot(W2.T) * sigmoid_derivative(hidden_output)
+
+    # Update weights
+    W2 += hidden_output.T.dot(d_output) * learning_rate
+    b2 += np.sum(d_output, axis=0, keepdims=True) * learning_rate
+    W1 += X.T.dot(d_hidden) * learning_rate
+    b1 += np.sum(d_hidden, axis=0, keepdims=True) * learning_rate
+
+# Testing
+print("\nTesting XOR gate:")
+for i in range(len(X)):
+    hidden = sigmoid(np.dot(X[i], W1) + b1)
+    output = sigmoid(np.dot(hidden, W2) + b2)
+    print(X[i], "->", round(output.item()))
+
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Output of the Multi Layer Perceptron Implementation}]
+Testing XOR gate:
+[0 0] -> 0
+[0 1] -> 1
+[1 0] -> 1
+[1 1] -> 0
+\end{lstlisting}
+
+% Conclusion
+\section{Conclusion}
+In this lab, we explored the concepts of Single Layer Perceptron (SLP) and Multi-Layer Perceptron (MLP).
+We implemented an SLP to learn the AND logic gate, which is linearly separable, and successfully trained it to produce correct outputs.
+We also implemented an MLP to learn the XOR logic gate, which is not linearly separable, and demonstrated its ability to classify the inputs correctly after training.
+These implementations highlight the capabilities of perceptrons in solving different types of classification problems.
+
+\end{document}
